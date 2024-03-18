@@ -1,12 +1,10 @@
-"""
-Flask Documentation:     https://flask.palletsprojects.com/
-Jinja2 Documentation:    https://jinja.palletsprojects.com/
-Werkzeug Documentation:  https://werkzeug.palletsprojects.com/
-This file contains the routes for your application.
-"""
-
 from app import app
-from flask import render_template, request, redirect, url_for
+from flask import render_template, request, redirect, url_for, flash, session, abort, send_from_directory
+import os
+from app import app, db
+from werkzeug.utils import secure_filename
+from app.models import Property
+from app.forms import PropertyForm
 
 
 ###
@@ -24,6 +22,52 @@ def about():
     """Render the website's about page."""
     return render_template('about.html', name="Mary Jane")
 
+@app.route('/property/<propid>')
+def get_image(propid):
+    prop = db.session.execute(db.select(Property).filter_by(id=propid)).scalar()
+    if prop is not None:
+       return send_from_directory(os.path.join(os.getcwd(),app.config['UPLOAD_FOLDER']), prop.image)
+    else:
+       return "Image Not Found."
+@app.route('/properties/<propertyid>')
+def get_property(propertyid):
+        prop = db.session.execute(db.select(Property).filter_by(id=propertyid)).scalar()
+        if prop is not None:
+           return render_template('property.html', property = prop)
+        return render_template('property.html')
+
+
+@app.route('/properties')
+def properties():
+    properties = db.session.execute(db.select(Property)).scalars()
+    #print(properties)
+    return render_template('properties.html', properties = properties)
+
+@app.route('/properties/create', methods=['POST', 'GET'])
+def add_property():
+    # Instantiate your form class
+    form = PropertyForm()
+    # Validate file upload on submit
+    if request.method == 'POST':
+       if form.validate_on_submit():
+          title = form.title.data 
+          description = form.description.data 
+          bedrooms = form.bedrooms.data 
+          bathrooms = form.bathrooms.data 
+          price = form.price.data 
+          type = form.type.data 
+          location = form.location.data 
+          photo = form.photo.data 
+          filename = secure_filename(photo.filename)
+          photo.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+          prop = Property(title=title,description=description,bedrooms=bedrooms,bathrooms=bathrooms,price=price,type=type,location=location,image=filename)
+          db.session.add(prop)
+          db.session.commit()
+          flash('New Property Added', 'success')
+          return redirect(url_for('home'))
+       else:
+          flash_errors(form)
+    return render_template('form.html', form = form)
 
 ###
 # The functions below should be applicable to all Flask apps.

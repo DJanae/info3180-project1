@@ -1,3 +1,81 @@
 body {
     padding-top: 5rem;
 }
+
+form{
+    background-color: lightgray;
+    padding: 5px;
+}
+
+
+div.group{
+   display: grid;
+   grid-template-columns: auto auto;
+}
+
+
+
+.form-field{
+    padding: 10px;
+}
+
+div.properties{
+    display: grid;
+    grid-template-columns: auto auto auto;
+    justify-content: center;
+    align-items: center;
+    row-gap: 10px;
+    column-gap: 10px;
+
+}
+
+div.single{
+    display:flex;
+    flex-direction: column;
+    width: 250px;
+    height: 330px;
+    box-sizing: border-box;
+    border: 1px solid palevioletred;
+    border-radius: 5px;
+    padding: 5px;
+
+}
+
+div.single img{
+    max-height: 150px;
+}
+
+div.single a{
+    align-self: center;
+}
+
+
+div.property{
+    display:flex;
+    flex-direction: row;
+    padding: 10px;
+    align-items: center;
+    width: fit-content;
+    margin-left: auto;
+    margin-right: auto;
+    box-sizing: border-box;
+    border: 1px solid palevioletred;
+    border-radius: 5px;
+    background-color: aliceblue;
+}
+
+
+div.description{
+    padding-left: 20px;
+}
+
+div.description > ul{
+    display: grid;
+    grid-template-columns: auto auto;
+    justify-items:left;
+}
+
+div.description > ul > li{
+    list-style: none;
+ 
+}
